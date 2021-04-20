@@ -1,0 +1,4 @@
+include ':nbadal-gif-encoder'
+include ':waynejo'
+include ':app'
+rootProject.name = "AndroidGif"
