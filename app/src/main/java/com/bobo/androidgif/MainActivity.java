@@ -12,6 +12,8 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.util.Pair;
 
+import com.bilibili.burstlinker.BurstLinker;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,6 +40,10 @@ public class MainActivity extends AppCompatActivity {
                     List<Pair<GifEncoderInterface, String>> encoders = new ArrayList<>();
                     encoders.add(new Pair<>(new WaynejoEncoder(), "waynejo.gif"));
                     encoders.add(new Pair<>(new NbadalEncoder(), "nbadal.gif"));
+                    for (int i = BurstLinker.UNIFROM_QUANTIZER; i <= BurstLinker.NEU_QUANT_QUANTIZER; i++) {
+                        encoders.add(new Pair<>(new BurstLinkerEncoder(i), "BurstLinkerEncoder_" + i + ".gif"));
+                    }
+
                     for (Pair<GifEncoderInterface, String> encoder : encoders) {
                         costTime = 0;
                         File waynejoFile = new File(MainActivity.this.getFilesDir(), encoder.second);
