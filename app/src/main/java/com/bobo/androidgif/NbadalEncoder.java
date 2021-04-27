@@ -21,13 +21,13 @@ public class NbadalEncoder implements GifEncoderInterface{
             e.printStackTrace();
             return false;
         }
-        mAnimatedGifEncoder.setDelay(50);
         mAnimatedGifEncoder.start(mFileOutputStream);
         return true;
     }
 
     @Override
     public boolean addFrame(Bitmap bitmap, int intervalMs) {
+        mAnimatedGifEncoder.setDelay(intervalMs);
         mAnimatedGifEncoder.addFrame(bitmap);
         return true;
     }
