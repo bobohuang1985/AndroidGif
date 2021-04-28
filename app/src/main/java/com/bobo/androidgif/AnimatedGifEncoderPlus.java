@@ -111,7 +111,7 @@ public class AnimatedGifEncoderPlus {
 	   * @param c
 	   *          Color to be treated as transparent on display.
 	   */
-	  public void setTransparent(int c) {
+	  private void  setTransparent(int c) {
 	    transparent = c;
 	  }
 
@@ -320,20 +320,7 @@ public class AnimatedGifEncoderPlus {
 	    palSize = 7;
 	    // get closest match to transparent color if specified
 	    if (transparent != -1) {
-	        transIndex = findClosest(transparent);
-			//Log.d("AndroidGif", "transIndex = " + transIndex);
-			byte unusedColorB = (byte) (transparent & 0xFF);
-			byte unusedColorG = (byte) ((transparent >> 8) & 0xFF);
-			byte unusedColorR = (byte) ((transparent >> 16) & 0xFF);
-			k = 0;
-			for (int i = 0; i < nPix; i++) {
-				k = i*3;
-				if (pixels[k++] == unusedColorB
-						&& pixels[k++] == unusedColorG
-						&& pixels[k++] == unusedColorR) {
-					indexedPixels[i] = (byte) transIndex;
-				}
-			}
+			transIndex = nq.map(transparent & 0xff, (transparent >> 8) & 0xff, (transparent >> 16) & 0xff);
 		}
 	    pixels = null;
 	  }
@@ -400,10 +387,10 @@ public class AnimatedGifEncoderPlus {
 		}
 		  //find a unused color
 		  if (needSetTransparent) {
-			  int unusedColor = 0;
-			  int unusedColorB = 0;
-			  int unusedColorG = 0;
-			  int unusedColorR = 0;
+			  int transparentColor = 0;
+			  int transparentColorB = 0;
+			  int transparentColorG = 0;
+			  int transparentColorR = 0;
 			  for (int colorChanel = 0; colorChanel < 3; colorChanel++) {
 				  int index = 0;
 				  for (int i = 0; i < 256; i++) {
@@ -416,26 +403,26 @@ public class AnimatedGifEncoderPlus {
 				  }
 				  switch (colorChanel) {
 					  case 0:
-						  unusedColorB = index;
+						  transparentColorB = index;
 						  break;
 					  case 1:
-						  unusedColorG = index;
+						  transparentColorG = index;
 						  break;
 					  case 2:
-						  unusedColorR = index;
+						  transparentColorR = index;
 						  break;
 				  }
-				  unusedColor = unusedColor | (index << (colorChanel * 8));
+				  transparentColor = transparentColor | (index << (colorChanel * 8));
 			  }
-			  setTransparent(unusedColor);
+			  setTransparent(transparentColor);
 			  for (int i = 0; i < data.length; i++) {
 				  int tind = i * 3;
 				  if (Math.abs(pixels[tind] - keyFramePixels[tind]) < COLOR_TOLERANCE
 						  && Math.abs(pixels[tind + 1] - keyFramePixels[tind + 1]) < COLOR_TOLERANCE
 						  && Math.abs(pixels[tind + 2] - keyFramePixels[tind + 2]) < COLOR_TOLERANCE) {
-					  pixels[tind] = (byte) unusedColorB;
-					  pixels[tind + 1] = (byte) unusedColorG;
-					  pixels[tind + 2] = (byte) unusedColorR;
+					  pixels[tind] = (byte) transparentColorB;
+					  pixels[tind + 1] = (byte) transparentColorG;
+					  pixels[tind + 2] = (byte) transparentColorR;
 				  }
 			  }
 		  } else {
