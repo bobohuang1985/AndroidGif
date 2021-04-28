@@ -16,6 +16,7 @@ public class NbadalEncoderPlus implements GifEncoderInterface {
     @Override
     public boolean createGIF(String fileName, int outputWidth, int outputHeight) {
         mAnimatedGifEncoder = new AnimatedGifEncoderPlus();
+        mAnimatedGifEncoder.setRepeat(0);
         try {
             mFileOutputStream = new FileOutputStream(fileName);
         } catch (FileNotFoundException e) {

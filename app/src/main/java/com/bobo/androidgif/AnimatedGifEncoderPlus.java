@@ -369,21 +369,21 @@ public class AnimatedGifEncoderPlus {
 	    int[] data = getImageData(image);
 		pixels = new byte[data.length * 3];
 		int[][] colorsUserCount = new int[3][256];
-
+		int tind = 0;
 		for (int i = 0; i < data.length; i++) {
 			int td = data[i];
-			int tind = i * 3;
 			//B
-			pixels[tind++] = (byte) ((td >> 0) & 0xFF);
+			pixels[tind] = (byte) ((td >> 0) & 0xFF);
 	        //G
-			pixels[tind++] = (byte) ((td >> 8) & 0xFF);
+			pixels[tind+1] = (byte) ((td >> 8) & 0xFF);
 			//R
-			pixels[tind] = (byte) ((td >> 16) & 0xFF);
+			pixels[tind+2] = (byte) ((td >> 16) & 0xFF);
 			if (needSetTransparent) {
-				++colorsUserCount[0][((int)pixels[tind-2])&0xff];
-				++colorsUserCount[1][((int)pixels[tind-1])&0xff];
-				++colorsUserCount[2][((int)pixels[tind])&0xff];
+				++colorsUserCount[0][((int)pixels[tind])&0xff];
+				++colorsUserCount[1][((int)pixels[tind+1])&0xff];
+				++colorsUserCount[2][((int)pixels[tind+2])&0xff];
 			}
+			tind += 3;
 		}
 		  //find a unused color
 		  if (needSetTransparent) {
@@ -415,15 +415,20 @@ public class AnimatedGifEncoderPlus {
 				  transparentColor = transparentColor | (index << (colorChanel * 8));
 			  }
 			  setTransparent(transparentColor);
+			  tind = 0;
 			  for (int i = 0; i < data.length; i++) {
-				  int tind = i * 3;
 				  if (Math.abs(pixels[tind] - keyFramePixels[tind]) < COLOR_TOLERANCE
 						  && Math.abs(pixels[tind + 1] - keyFramePixels[tind + 1]) < COLOR_TOLERANCE
 						  && Math.abs(pixels[tind + 2] - keyFramePixels[tind + 2]) < COLOR_TOLERANCE) {
 					  pixels[tind] = (byte) transparentColorB;
 					  pixels[tind + 1] = (byte) transparentColorG;
 					  pixels[tind + 2] = (byte) transparentColorR;
+				  } else {
+					  keyFramePixels[tind] = pixels[tind];
+					  keyFramePixels[tind+1] = pixels[tind+1];
+					  keyFramePixels[tind+2] = pixels[tind+2];
 				  }
+				  tind += 3;
 			  }
 		  } else {
 			  keyFramePixels = pixels;
